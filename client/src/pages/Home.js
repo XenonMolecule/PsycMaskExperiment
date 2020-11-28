@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Navigation from '../components/Navigation';
+import FaceImg from '../components/FaceImg';
 
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Button from 'react-bootstrap/Button';
@@ -27,6 +28,9 @@ function Home() {
                 </p>
                 <p>
                     <Button href="#instructions" variant="link" size="lg">Learn more</Button>
+                </p>
+                <p>
+                    <FaceImg num={3} emotion={"sad"} mask />
                 </p>
             </Jumbotron>
         </>
