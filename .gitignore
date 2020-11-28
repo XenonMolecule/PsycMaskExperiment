@@ -106,3 +106,4 @@ dist
 # Hide any files that are for the permission only dataset
 /data/faceexp-comparison-data-train-public.csv
 /data/faceexp-comparison-data-test-public.csv
+/data/model_v6_23.hdf5
