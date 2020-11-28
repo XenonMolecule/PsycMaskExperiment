@@ -102,3 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Hide any files that are for the permission only dataset
+/data/faceexp-comparison-data-train-public.csv
+/data/faceexp-comparison-data-test-public.csv
