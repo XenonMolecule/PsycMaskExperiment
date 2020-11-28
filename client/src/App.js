@@ -8,13 +8,18 @@ import {
 
 import Home from './pages/Home.js';
 import LearnMore from "./pages/LearnMore";
+import Instructions from "./pages/Instructions";
+import Experiment from "./pages/Experiment";
 
 function App() {
     return (
         <Router>
             <Switch>
+                <Route path="/experiment">
+                    <Experiment/>
+                </Route>
                 <Route path="/instructions">
-                    <Home />
+                    <Instructions />
                 </Route>
                 <Route path="/learn">
                     <LearnMore />
