@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Navigation from '../components/Navigation';
+import { Link } from 'react-router-dom';
 
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Button from 'react-bootstrap/Button';
@@ -23,10 +24,10 @@ function Home() {
                     If you're interested in learning more about this project you can also click "Learn more"
                 </p>
                 <p>
-                    <Button href="#instructions" variant="primary" size="lg">Get started</Button>
+                    <Button as={Link} to="/instructions" variant="primary" size="lg">Get started</Button>
                 </p>
                 <p>
-                    <Button href="#learn" variant="link" size="lg">Learn more</Button>
+                    <Button as={Link} to="/learn" variant="link" size="lg">Learn more</Button>
                 </p>
             </Jumbotron>
         </>
