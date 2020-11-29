@@ -4,10 +4,23 @@ const http = require("http");
 const port = process.env.PORT || 4001;
 const index = require("./routes/index");
 
+const { Client } = require('pg');
+
 const app = express();
 app.use(index);
 
 const server = http.createServer(app);
+
+console.log(process.env.DATABASE_URL);
+
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
+
+client.connect();
 
 const io = require("socket.io")(server, {
     cors: {
