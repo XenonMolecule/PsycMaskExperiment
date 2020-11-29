@@ -16,9 +16,7 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 
-import socketIOClient from "socket.io-client";
 import FaceImg from "./FaceImg";
-const ENDPOINT = "http://127.0.0.1:4001";
 
 function emotionNumToString(num) {
     switch(num) {
@@ -65,23 +63,33 @@ function emotionNumToColor(num) {
     }
 }
 
+function calcTimeDiff(time) {
+    const d = new Date();
+    return d - time;
+}
+
 function ExperimentComponent(props) {
     const [step, setStep] = useState(0);
     const [startTime, setStartTime] = useState(new Date());
+    const [lastPressTime, setLastPressTime] = useState(new Date());
     const [timeDiff, setTimeDiff] = useState(0);
 
-    const {emotion1, emotion2, experiment} = props;
+    const {emotion1, emotion2, experiment, ontrial, onreset} = props;
+
+    function handleKeyPress(e) {
+        if((e.code === "ArrowLeft" || e.code === "ArrowRight") && step >= 2 && step-2 < experiment.length) {
+            setStep(step + 1);
+            ontrial(experiment[step - 2], e.code === "ArrowLeft", calcTimeDiff(lastPressTime));
+            setLastPressTime(new Date());
+        }
+    }
 
     useEffect(() => {
-        const socket = socketIOClient(ENDPOINT);
-        socket.on("FromAPI", data => {
-            // setResponse(data);
-        });
-
-        // CLEAN UP THE EFFECT
-        return () => socket.disconnect();
-
-    }, []);
+        document.addEventListener("keydown", handleKeyPress);
+        return () => {
+            document.removeEventListener("keydown", handleKeyPress);
+        }
+    }, [step, lastPressTime]);
 
     useEffect(() => {
         const curr_date = new Date();
@@ -116,13 +124,14 @@ function ExperimentComponent(props) {
                     setTimeout(() => {
                         setStep(2);
                         setStartTime(new Date());
+                        setLastPressTime(new Date());
                     }, 5000);
                 }}>Got it!</Button>
             </div>}
             {(step === 1) && <div className={"start-body"}>
                 <p style={{marginTop:"25vh"}} className={"huge-text"}>{Math.ceil((5000 - timeDiff) / 1000)}</p>
             </div> }
-            {(step >= 2) && <div className={"start-body vertical-center"}>
+            {(step >= 2 && step -2 < experiment.length) && <div className={"start-body vertical-center"}>
                 <Container>
                     <h1>Use the arrow keys!</h1>
                     <Row className={"justify-content-center"}>
@@ -154,6 +163,13 @@ function ExperimentComponent(props) {
                     </Row>
                     <h1>{(Math.round(timeDiff / 10) / 100).toFixed(2)}</h1>
                 </Container>
+            </div>}
+            {(step - 2 === experiment.length) && <div className={"start-body vertical-center"}>
+                <h1>That's all for that round.</h1>
+                <Button onClick={() => {
+                    onreset();
+                    setStep(0);
+                }}>Continue</Button>
             </div>}
         </div>
     );

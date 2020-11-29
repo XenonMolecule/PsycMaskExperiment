@@ -16,7 +16,7 @@ function App() {
         <Router>
             <Switch>
                 <Route path="/experiment">
-                    <Experiment/>
+                    <Experiment />
                 </Route>
                 <Route path="/instructions">
                     <Instructions />
