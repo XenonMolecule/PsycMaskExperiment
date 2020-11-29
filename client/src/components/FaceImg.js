@@ -106,7 +106,7 @@ import SadMask11 from '../static/Faces/SadMask/11.jpg';
 import SadMask12 from '../static/Faces/SadMask/12.jpg';
 
 function FaceImg(props) {
-    const {num, emotion, mask} = props;
+    const {num, emotion, mask, width} = props;
 
     const angry = [Angry01, Angry02, Angry03, Angry04, Angry05, Angry06, Angry07, Angry08, Angry09, Angry10, Angry11, Angry12];
     const angry_mask = [AngryMask01, AngryMask02, AngryMask03, AngryMask04, AngryMask05, AngryMask06, AngryMask07,
@@ -146,7 +146,7 @@ function FaceImg(props) {
 
 
     return (
-        <img src={image}/>
+        <img style={{width:width}} src={image}/>
     );
 }
 
@@ -154,12 +154,14 @@ FaceImg.propTypes = {
     num: PropTypes.number,
     emotion: PropTypes.string,
     mask: PropTypes.bool,
+    width: PropTypes.string,
 };
 
 FaceImg.defaultProps = {
     num: 0,
     emotion: "happy",
     mask: false,
+    width: "35%",
 };
 
 export default FaceImg;

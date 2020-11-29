@@ -60,3 +60,9 @@
 .right {
     right: 0;
 }
+
+.vertical-center {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}

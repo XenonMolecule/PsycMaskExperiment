@@ -1,106 +1,69 @@
-import React, {useState, useEffect} from 'react';
-import "../static/css/experiment.css";
+import React from 'react';
+import ExperimentComponent from "../components/ExperimentComponent";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngry } from '@fortawesome/free-solid-svg-icons';
-import { faDizzy } from '@fortawesome/free-solid-svg-icons';
-import { faSmile } from '@fortawesome/free-solid-svg-icons';
-import { faSadTear } from '@fortawesome/free-solid-svg-icons';
+const SAMPLES_PER_CLASS_PER_TRIAL = 6;
 
-import { faCaretSquareLeft } from '@fortawesome/free-solid-svg-icons';
-import { faCaretSquareRight } from '@fortawesome/free-solid-svg-icons';
-
-import Button from 'react-bootstrap/Button';
-
-import socketIOClient from "socket.io-client";
-const ENDPOINT = "http://127.0.0.1:4001";
-
-function emotionNumToString(num) {
-    switch(num) {
-        case 0:
-            return "Angry";
-        case 1:
-            return "Confused";
-        case 2:
-            return "Happy";
-        case 3:
-            return "Sad";
-        default:
-            return "Happy";
+//////////////////////////////////////////////////////////////////
+//                                                              //
+//                         HELPER METHODS                       //
+//                                                              //
+//////////////////////////////////////////////////////////////////
+function generateFaceNums(amt, max) {
+    let nums = new Set();
+    let random = Math.floor(Math.random() * max);
+    if (amt > max) {
+        return [];
     }
+    while (nums.size < amt) {
+        while (nums.has(random)) {
+            random = Math.floor(Math.random() * max);
+        }
+        nums.add(random);
+    }
+    return Array.from(nums);
 }
 
-function emotionNumToIcon(num) {
-    switch(num) {
-        case 0:
-            return <FontAwesomeIcon icon={faAngry}/>;
-        case 1:
-            return <FontAwesomeIcon icon={faDizzy}/>;
-        case 2:
-            return <FontAwesomeIcon icon={faSmile}/>;
-        case 3:
-            return <FontAwesomeIcon icon={faSadTear}/>;
-        default:
-            return <FontAwesomeIcon icon={faSmile}/>;
+function generateMaskVsUnmasked(amt) {
+    let gen = [];
+    while (gen.length < amt) {
+        gen.push(Math.floor(Math.random() * 2) === 1);
     }
+    return gen;
 }
 
-function emotionNumToColor(num) {
-    switch(num) {
-        case 0:
-            return "#FF867F";
-        case 1:
-            return "#BAFF80";
-        case 2:
-            return "#FFF480";
-        case 3:
-            return "#81C0FF";
-        default:
-            return "#FFF480";
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * i);
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 }
 
 function Experiment() {
-    const [step, setStep] = useState(0);
-
     let emotion1 = Math.floor(Math.random() * 4);
     let emotion2 = emotion1;
-    while (emotion2 == emotion1) {
+    while (emotion2 === emotion1) {
         emotion2 = Math.floor(Math.random() * 4);
     }
 
-    useEffect(() => {
-        const socket = socketIOClient(ENDPOINT);
-        socket.on("FromAPI", data => {
-            // setResponse(data);
-        });
+    let img1 = generateFaceNums(SAMPLES_PER_CLASS_PER_TRIAL, 12);
+    let img2 = generateFaceNums(SAMPLES_PER_CLASS_PER_TRIAL, 12);
 
-        // CLEAN UP THE EFFECT
-        return () => socket.disconnect();
+    let masked1 = generateMaskVsUnmasked(SAMPLES_PER_CLASS_PER_TRIAL);
+    let masked2 = generateMaskVsUnmasked(SAMPLES_PER_CLASS_PER_TRIAL);
 
-    }, []);
+    let experiment = [];
+    for (let i = 0; i < SAMPLES_PER_CLASS_PER_TRIAL; i ++) {
+        experiment.push([emotion1, img1[i], masked1[i]]);
+    }
+    for (let i = 0; i < SAMPLES_PER_CLASS_PER_TRIAL; i ++) {
+        experiment.push([emotion1, img2[i], masked2[i]]);
+    }
 
-    return (
-        <div className={"experiment-body"}>
-            {(step === 0) && <div className={"start-body"}>
-                <div className={"split left"} style={{backgroundColor:emotionNumToColor(emotion1)}}>
-                    <div className={"vertical-shift"}>
-                        <h1>{emotionNumToString(emotion1)}</h1>
-                        <p className={"huge-text"}>{emotionNumToIcon(emotion1)}</p>
-                        <p className={"big-text"}><FontAwesomeIcon icon={faCaretSquareLeft}/></p>
-                    </div>
-                </div>
-                <div className={"split right"} style={{backgroundColor:emotionNumToColor(emotion2)}}>
-                    <div className={"vertical-shift"}>
-                        <h1>{emotionNumToString(emotion2)}</h1>
-                        <p className={"huge-text"}>{emotionNumToIcon(emotion2)}</p>
-                        <p className={"big-text"}><FontAwesomeIcon icon={faCaretSquareRight}/></p>
-                    </div>
-                </div>
-                <Button className={"startBtn"} size={"lg"} variant={"dark"}>Got it!</Button>
-            </div>}
-        </div>
-    );
+    shuffle(experiment);
+
+    return <ExperimentComponent emotion1={emotion1} emotion2={emotion2} experiment={experiment}/>
 }
 
 export default Experiment;
