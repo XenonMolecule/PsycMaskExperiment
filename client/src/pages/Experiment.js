@@ -3,7 +3,7 @@ import ExperimentComponent from "../components/ExperimentComponent";
 import { v4 as uuidv4 } from 'uuid';
 
 import socketIOClient from "socket.io-client";
-const ENDPOINT = "http://127.0.0.1:4001";
+const ENDPOINT = "https://psyc1101.herokuapp.com";
 
 const SAMPLES_PER_CLASS_PER_TRIAL = 6;
 
