@@ -11,16 +11,29 @@ app.use(index);
 
 const server = http.createServer(app);
 
-console.log(process.env.DATABASE_URL);
-
 const client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false
     }
+    // user: 'michaelryan',
+    // host: 'localhost',
+    // database: 'michaelryan',
+    // password: null,
+    // port: 5432,
 });
 
 client.connect();
+
+// client.query("INSERT INTO \"Trial\".\"Trial\" (actual_emotion, other_emotion, picked_emotion, " +
+//     "correct, image_number, mask, time, userid) VALUES ('Happy','Angry','Happy',true, 1, true, 1001,'1234')", (err, res) => {
+//     console.log(err, res);
+//     client.end()
+// });
+
+// client.query("SELECT * FROM \"Trial\".\"Trial\"", (err, res) => {
+//     console.log(err, res);
+// });
 
 const io = require("socket.io")(server, {
     cors: {
@@ -35,7 +48,21 @@ io.on("connection", (socket) => {
         console.log("Client disconnected");
     });
     socket.on("trial", data => {
-        console.log(data);
+        let queryString = "INSERT INTO \"Trial\".\"Trial\" (actual_emotion, other_emotion, picked_emotion, " +
+            "correct, image_number, mask, time, userid) VALUES ('" +
+            data['actual_emotion'] + "','" +
+            data['other_emotion'] + "','" +
+            data['picked_emotion'] + "','" +
+            data['correct'] + "','" +
+            data['image_number'] + "','" +
+            data['mask'] + "','" +
+            data['time'] + "','" +
+            data['userid'] + "')";
+        client.query(queryString, (err, res) => {
+            if (err) {
+                console.log(err);
+            }
+        })
     });
 });
 
