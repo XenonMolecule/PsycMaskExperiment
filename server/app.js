@@ -44,7 +44,7 @@ client.connect();
 
 const io = require("socket.io")(server, {
     cors: {
-        origin: "http://psyc1101.herokuapp.com/",
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
